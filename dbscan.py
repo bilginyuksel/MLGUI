@@ -1,9 +1,5 @@
 from math import sqrt
 import random
-# import export
-import json
-# from plot import ModelPlot
-# from util import generate_blobs_data, generate_cyclic_data, export_model, import_model
 
 # Enum to represent point status
 class Status:

@@ -9,9 +9,7 @@ from PyQt5.QtGui import (
 import sys
 from util import generate_blobs_data, generate_cyclic_data, generate_friedman_data, import_model
 from plot import ModelPlot, easy_plot_data
-# from dbscan import DBSCAN
-from algorithm_dialogs import DbscanDialog
-
+from algorithm_dialogs import DbscanDialog, FuzzyDialog
 from export_dialog import ExportDialog
 
 
@@ -70,6 +68,7 @@ class Window(QWidget):
         dbscanButton = QPushButton("DBSCAN")
         dbscanButton.clicked.connect(self._run_dbscan)
         fuzzyMeansButton = QPushButton("Fuzzy Means")
+        fuzzyMeansButton.clicked.connect(self._run_fuzzy)
         firstHalf = QHBoxLayout()
         firstHalf.addWidget(dbscanButton)
         firstHalf.addWidget(fuzzyMeansButton)
@@ -143,6 +142,18 @@ class Window(QWidget):
         
         model_plot = ModelPlot(self.model)
         model_plot.plot()
+
+
+    def _run_fuzzy(self):
+
+        dialog = FuzzyDialog(self.data)
+        if dialog.exec_():
+            self.model = dialog.model
+
+        if not self.model: return None
+        self._show_statistics()
+        
+        self.lastAlgorithmLabel.setText("FCM algoritması çalıştırıldı ve hazır.")
     
     def _run_dbscan(self):
 
@@ -156,11 +167,15 @@ class Window(QWidget):
             self.model = dialog.model
         
         if not self.model: return None
-        for key, value in self.model.info.items():
-            self.statisticsList.addItem(key+": "+str(value))
+        self._show_statistics()
 
         self.lastAlgorithmLabel.setText("DBSCAN algoritması çalıştırıldı ve hazır.")
 
+    def _show_statistics(self):
+        self.statisticsList.clear()
+        self.statisticsList.addItem(type(self.model).__name__)
+        for key, value in self.model.info.items():
+            self.statisticsList.addItem(key+": "+str(value))
 
     def _export_model_button(self):
 
@@ -184,8 +199,7 @@ class Window(QWidget):
             self.lastAlgorithmLabel.setText(filename[0])
 
             # Write model info to listView
-            for key, value in self.model.info.items():
-                self.statisticsList.addItem(key+": "+str(value))
+            self._show_statistics()
 
     def _chooseFile(self):
         dialog = QFileDialog()

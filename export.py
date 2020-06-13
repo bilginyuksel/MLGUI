@@ -1,5 +1,6 @@
 import json
 import dbscan
+import fuzzy
 # json.loads
 
 class ModelExport(object):
@@ -10,6 +11,7 @@ class ModelExport(object):
         
         self.models = {
             'DBSCAN': self._dbscan,
+            'FCM':self._fuzzy
         }
 
         self.extension = {
@@ -25,6 +27,20 @@ class ModelExport(object):
         self.models[self.model_name]()
         
 
+    def _fuzzy(self):
+        
+        with open(self.filename, 'w') as f:
+            f.write(self.model_name)
+            f.write("\n")
+            # Write model data
+            f.write(json.dumps(self.model.info))
+            f.write("\n")
+
+            # Write points data
+            for i in self.model.fcm_objects:
+                f.write(json.dumps(i.to_json()))
+                f.write("\n")
+            f.write(json.dumps(self.model.fcm_clusters))
 
     def _dbscan(self):
         with open(self.filename, 'w') as f:
@@ -52,7 +68,8 @@ class ModelImport(object):
             raise Exception()
 
         self.models = {
-            'DBSCAN':self._dbscan
+            'DBSCAN':self._dbscan,
+            'FCM': self._fuzzy
         }
 
     
@@ -72,7 +89,37 @@ class ModelImport(object):
         self.model = self.models[model_name](model_info, data[2:])
         return self.model
 
-    
+    def _fuzzy(self, info, data):
+
+        fuzzy_data_array = []
+
+        for i in range(2, len(data)-1):
+            fcm_object_dict = json.loads(data[i])
+            obj_data = fcm_object_dict['data']
+            obj_gamma = fcm_object_dict['gamma']
+            obj_cluster = fcm_object_dict['cluster']
+
+            splitted_obj_data = obj_data.split(",")
+            if splitted_obj_data[-1]=='': splitted_obj_data.pop()
+            clean_obj_data = list(map(float, splitted_obj_data))
+
+            splitted_obj_gamma = obj_gamma.split(",")
+            if splitted_obj_gamma[-1]=='':splitted_obj_gamma.pop()
+            clean_obj_gamma = list(map(float, splitted_obj_gamma))
+
+            tmp = fuzzy.fcm_data(clean_obj_data, -1, clean_obj_gamma)
+            tmp.cluster = obj_cluster
+
+            fuzzy_data_array.append(tmp)
+        
+        fuzzy_object = fuzzy.FCM(centroid_length= info['Cluster'], error= info['Error Bound'], m= info['Membership'], max_iter= info['Max iteration'])
+        fuzzy_object.fcm_objects = fuzzy_data_array
+        fuzzy_object.fcm_clusters = json.loads(data[-1])
+        fuzzy_object.info = info
+        fuzzy_object.error = info['Actual Error']
+
+        return fuzzy_object
+
     def _dbscan(self, info, data):
 
         dbscan_data_array = []

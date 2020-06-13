@@ -11,7 +11,8 @@ class ModelPlot(object):
 
         self.modelset = {
         'DBSCAN':self._dbscan,
-        'Gaussian':None
+        'Gaussian':None,
+        'FCM': self._fuzzy
         }
         # We assume data is 2D 
         # We can check data here
@@ -31,6 +32,21 @@ class ModelPlot(object):
         self.modelset[type(self.model).__name__]()
 
 
+    def _fuzzy(self):
+        
+        color_data_x = defaultdict(list)
+        color_data_y = defaultdict(list)
+
+        for i in self.model.fcm_objects:
+            color_data_x[i.cluster].append(i.data[0])
+            color_data_y[i.cluster].append(i.data[1])
+
+        for i in color_data_x.keys():
+            plt.scatter(color_data_x[i], color_data_y[i], color= self.colors[i+1])
+        
+        plt.title("Fuzzy Means Clustering")
+        plt.show()
+
 
     def _dbscan(self):
         
@@ -47,7 +63,7 @@ class ModelPlot(object):
         for i in color_data_x.keys():
             plt.scatter(color_data_x[i], color_data_y[i], color= self.colors[i])
 
-        plt.title("Number of clusters:"+str(self.model.cluster))
+        plt.title("DBSCAN Clustering")
         plt.show()
 
 
