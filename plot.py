@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from collections import defaultdict
+from random import choice
 
 class ModelPlot(object):
 
@@ -23,8 +24,14 @@ class ModelPlot(object):
 
         if self.features_length>2:
             raise Exception()
-
-        self.colors = {1:'b', 2:'g', 3:'r', 4:'c', 5:'m', 6:'y', -1:'k'}
+        
+        self.colors = {}
+        for j in range(30):
+            hexcode = ['#']
+            for i in range(6):
+                hexcode.append(choice("0123456789ABCDEF"))
+            self.colors[j+1] = "".join(hexcode)
+        self.colors[-1] = '#000000'
 
 
 
@@ -43,7 +50,7 @@ class ModelPlot(object):
             color_data_y[i.cluster].append(i.features[1])
 
         for i in color_data_x.keys():
-            plt.scatter(color_data_x[i], color_data_y[i], color= self.colors[i])
+            plt.scatter(color_data_x[i], color_data_y[i], c= self.colors[i])
         
         plt.title("Mean Shift Clustering")
         plt.show()
