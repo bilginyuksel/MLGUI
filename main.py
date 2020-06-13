@@ -9,7 +9,7 @@ from PyQt5.QtGui import (
 import sys
 from util import generate_blobs_data, generate_cyclic_data, generate_friedman_data, import_model
 from plot import ModelPlot, easy_plot_data
-from algorithm_dialogs import DbscanDialog, FuzzyDialog
+from algorithm_dialogs import DbscanDialog, FuzzyDialog, MeanShiftDialog
 from export_dialog import ExportDialog
 
 
@@ -75,6 +75,7 @@ class Window(QWidget):
 
         gaussianButton = QPushButton("Gaussian")
         meanShiftButton = QPushButton("Mean Shift")
+        meanShiftButton.clicked.connect(self._run_mean_shift)
         secondHalf = QHBoxLayout()
         secondHalf.addWidget(gaussianButton)
         secondHalf.addWidget(meanShiftButton)
@@ -143,6 +144,16 @@ class Window(QWidget):
         model_plot = ModelPlot(self.model)
         model_plot.plot()
 
+    def _run_mean_shift(self):
+
+        dialog = MeanShiftDialog(self.data)
+        if dialog.exec_():
+            self.model = dialog.model
+
+        if not self.model: return None
+        self._show_statistics()
+
+        self.lastAlgorithmLabel.setText('Mean Shift algoritması çalıştırıldı ve hazır.')
 
     def _run_fuzzy(self):
 

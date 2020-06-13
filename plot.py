@@ -12,6 +12,7 @@ class ModelPlot(object):
         self.modelset = {
         'DBSCAN':self._dbscan,
         'Gaussian':None,
+        'MeanShift':self._mean_shift,
         'FCM': self._fuzzy
         }
         # We assume data is 2D 
@@ -31,6 +32,21 @@ class ModelPlot(object):
 
         self.modelset[type(self.model).__name__]()
 
+
+    def _mean_shift(self):
+
+        color_data_x = defaultdict(list)
+        color_data_y = defaultdict(list)
+
+        for i in self.model.data:
+            color_data_x[i.cluster].append(i.features[0])
+            color_data_y[i.cluster].append(i.features[1])
+
+        for i in color_data_x.keys():
+            plt.scatter(color_data_x[i], color_data_y[i], color= self.colors[i])
+        
+        plt.title("Mean Shift Clustering")
+        plt.show()
 
     def _fuzzy(self):
         

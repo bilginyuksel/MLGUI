@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QComboBox, QLabel
 import sys
 from dbscan import DBSCAN
 from fuzzy import FCM
+from mean_shift import MeanShift
 
 class DbscanDialog(QDialog):
 
@@ -112,3 +113,53 @@ class FuzzyDialog(QDialog):
     self.model.fit(self.data)
     self.accept()
     self.close()
+
+
+
+class MeanShiftDialog(QDialog):
+
+  def __init__(self, data):
+    super().__init__()
+
+    self.data = data
+    self.model = None
+    self.setWindowTitle("Mean Shift Özellikleri")
+
+    self._configure()
+
+  def _configure(self):
+    
+    mainLayout = QVBoxLayout()
+
+    hor1 = QHBoxLayout()
+    bandwidthLabel = QLabel("Bandwidth: ")
+    self.bandwidthLineEdit = QLineEdit("1.5")
+    hor1.addWidget(bandwidthLabel)
+    hor1.addWidget(self.bandwidthLineEdit)
+
+    hor2 = QHBoxLayout()
+    errorLabel = QLabel("Minimum Error: ")
+    self.errorLineEdit = QLineEdit("0.001")
+    hor2.addWidget(errorLabel)
+    hor2.addWidget(self.errorLineEdit)
+
+    train_button = QPushButton("Modeli çalıştır")
+    train_button.clicked.connect(self._run_model)
+
+    mainLayout.addLayout(hor1)
+    mainLayout.addLayout(hor2)
+    mainLayout.addWidget(train_button)
+
+    self.setLayout(mainLayout)
+
+  def _run_model(self):
+    
+    bandwidth = float(self.bandwidthLineEdit.text())
+    min_error = float(self.errorLineEdit.text())
+
+    self.model = MeanShift(bandwidth=bandwidth, error=min_error)
+    self.model.fit(self.data)
+
+    self.accept()
+    self.close()
+

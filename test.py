@@ -1,7 +1,9 @@
 from dbscan import DBSCAN
 from fuzzy import FCM
+from mean_shift import MeanShift
 from util import generate_cyclic_data, generate_blobs_data, export_model, import_model
 from plot import ModelPlot
+
 
 X, y = generate_blobs_data()
 # export_model(test)
@@ -55,4 +57,9 @@ def model_import_test(filename):
   print(type(model).__name__)
   plot_automation(model)
 
-model_import_test('FCM.yuksel')
+# model_import_test('FCM.yuksel')
+model_import_test('MeanShift.yuksel')
+
+# test = MeanShift()
+# test.fit(X)
+# model_export_test(test)

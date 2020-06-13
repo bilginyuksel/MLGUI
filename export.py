@@ -1,6 +1,7 @@
 import json
 import dbscan
 import fuzzy
+import mean_shift
 # json.loads
 
 class ModelExport(object):
@@ -11,7 +12,8 @@ class ModelExport(object):
         
         self.models = {
             'DBSCAN': self._dbscan,
-            'FCM':self._fuzzy
+            'FCM':self._fuzzy,
+            'MeanShift': self._mean_shift
         }
 
         self.extension = {
@@ -26,6 +28,20 @@ class ModelExport(object):
     def export(self):
         self.models[self.model_name]()
         
+    def _mean_shift(self):
+
+        with open(self.filename, 'w') as f:
+            f.write(self.model_name)
+            f.write("\n")
+            
+            f.write(json.dumps(self.model.info))
+            f.write("\n")
+
+            # Write actual data.
+            for i in self.model.data:
+                f.write(json.dumps(i.to_json()))
+                f.write("\n")
+            
 
     def _fuzzy(self):
         
@@ -69,7 +85,8 @@ class ModelImport(object):
 
         self.models = {
             'DBSCAN':self._dbscan,
-            'FCM': self._fuzzy
+            'FCM': self._fuzzy,
+            'MeanShift':self._mean_shift
         }
 
     
@@ -88,6 +105,33 @@ class ModelImport(object):
 
         self.model = self.models[model_name](model_info, data[2:])
         return self.model
+
+    def _mean_shift(self, info, data):
+
+        mean_data_array = []
+        
+        for i in range(2, len(data)):
+            mean_object_dict = json.loads(data[i])
+            obj_features = mean_object_dict['features']
+            obj_cluster = mean_object_dict['cluster']
+
+            splitted_obj_features = obj_features.split(",")
+            if splitted_obj_features[-1] == '': splitted_obj_features.pop()
+
+            clean_obj_data = list(map(float, splitted_obj_features))
+
+            tmp = mean_shift.mean_shift_data(clean_obj_data)
+            tmp.cluster = obj_cluster
+
+            mean_data_array.append(tmp)
+        
+        mean_shift_obj = mean_shift.MeanShift(info['Bandwidth'], info['Min Error'])
+        mean_shift_obj.data = mean_data_array
+        mean_shift_obj.cluster = obj_cluster
+        mean_shift_obj.info = info
+
+        return mean_shift_obj
+
 
     def _fuzzy(self, info, data):
 
