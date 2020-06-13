@@ -19,5 +19,5 @@ Projeyi çalıştırmak için :
 
 
 Projeyi hazırlayanlar : 
-	Kaan Yüksel Bilgin	: 201513171051 (Normal Öğretim)
+	Kaan Yüksel Bilgin	: 201513171051 (Normal Öğretim)<br>
 	Bayram Uslu		: 201513171068 (Normal Öğretim)
