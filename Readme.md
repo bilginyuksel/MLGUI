@@ -17,7 +17,9 @@ Projeyi çalıştırmak için :
 	>> pip install -r requirements.txt
 	>> python main.py
 
-
-Projeyi hazırlayanlar : 
-	Kaan Yüksel Bilgin	: 201513171051 (Normal Öğretim)<br>
+<br>
+Youtube video link: https://youtu.be/MxdWa3RPW-M
+<br>
+Projeyi hazırlayanlar : <br>
+	Kaan Yüksel Bilgin	: 201513171051 (Normal Öğretim) <br>
 	Bayram Uslu		: 201513171068 (Normal Öğretim)
