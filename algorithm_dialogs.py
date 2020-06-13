@@ -52,8 +52,6 @@ class DbscanDialog(QDialog):
     self.accept()
     self.close()
 
-
-
 class FuzzyDialog(QDialog):
 
   def __init__(self, data):
@@ -113,8 +111,6 @@ class FuzzyDialog(QDialog):
     self.model.fit(self.data)
     self.accept()
     self.close()
-
-
 
 class MeanShiftDialog(QDialog):
 

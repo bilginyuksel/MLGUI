@@ -26,7 +26,7 @@ class ModelPlot(object):
             raise Exception()
         
         self.colors = {}
-        for j in range(30):
+        for j in range(100):
             hexcode = ['#']
             for i in range(6):
                 hexcode.append(choice("0123456789ABCDEF"))

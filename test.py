@@ -2,7 +2,7 @@ from dbscan import DBSCAN
 from fuzzy import FCM
 from mean_shift import MeanShift
 from util import generate_cyclic_data, generate_blobs_data, export_model, import_model
-from plot import ModelPlot
+from plot import ModelPlot, easy_plot_data
 
 
 X, y = generate_blobs_data()
@@ -63,3 +63,19 @@ model_import_test('MeanShift.yuksel')
 # test = MeanShift()
 # test.fit(X)
 # model_export_test(test)
+arr = []
+with open('s1.txt', 'r') as f:
+  lines =  f.read().split("\n")
+
+result = []
+while lines[-1]=='': lines.pop()
+for i in lines:
+  
+  u, v = list(map(int, i.split()))
+  result.append([u, v])
+
+easy_plot_data(result)
+
+test = MeanShift(bandwidth=125000)
+test.fit(result)
+plot_automation(test)

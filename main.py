@@ -67,17 +67,15 @@ class Window(QWidget):
         algoLabel = QLabel("Aşağıdaki algoritmalardan eğitmek istediğinizi seçiniz.")
         dbscanButton = QPushButton("DBSCAN")
         dbscanButton.clicked.connect(self._run_dbscan)
-        fuzzyMeansButton = QPushButton("Fuzzy Means")
+        fuzzyMeansButton = QPushButton("Fuzzy C Means")
         fuzzyMeansButton.clicked.connect(self._run_fuzzy)
         firstHalf = QHBoxLayout()
         firstHalf.addWidget(dbscanButton)
         firstHalf.addWidget(fuzzyMeansButton)
 
-        gaussianButton = QPushButton("Gaussian")
         meanShiftButton = QPushButton("Mean Shift")
         meanShiftButton.clicked.connect(self._run_mean_shift)
         secondHalf = QHBoxLayout()
-        secondHalf.addWidget(gaussianButton)
         secondHalf.addWidget(meanShiftButton)
 
 
@@ -219,6 +217,17 @@ class Window(QWidget):
         if dialog.exec_():
             filename = dialog.selectedFiles()
             self.lastFileLabel.setText(filename[0])
+
+            lines = None
+            with open(filename[0], 'r') as f:
+                lines = f.read().split("\n")
+
+            res = []
+            while lines[-1]=='': lines.pop()
+            for i in lines:
+                u, v = map(float, i.split())
+                res.append([u, v])
+            self.data = res
 
 
 if __name__ == '__main__':

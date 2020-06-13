@@ -1,5 +1,6 @@
 from random import randint
 from math import sqrt
+from collections import defaultdict
 
 class mean_shift_data:
 
@@ -59,6 +60,16 @@ class MeanShift:
     for idx in range(len(total)): total[idx]/=count
 
     return total
+  
+  def _set_info(self):
+    clusters = [i for i in range(self.cluster+1)]
+    for i in self.data:
+      clusters[i.cluster] +=1
+    
+    for i in range(1, len(clusters)):
+      key = 'Cluster_'+str(i)
+      self.info[key] = clusters[i]
+    
     
   def _transform(self, data):
     self.seen = [i for i in range(len(data))]
@@ -98,6 +109,7 @@ class MeanShift:
   
    
     self.info['Cluster'] = self.cluster -1 
+    self._set_info()
     
     print(self.info)
 
