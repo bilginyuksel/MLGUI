@@ -31,17 +31,17 @@ def generate_cyclic_data(n_samples = 750, factor=0.3, noise=0.1):
 
     return data, labels
 
-def export_model(transform_model, filename=None, extent = 1):
+def export_model(transform_model, filename=None, extension = 1):
 
     # Get important feature according to model
     # For DBSCAN, self.data is the most important component
     # We have to right it to a file and read it afterwards.
-    model = ModelExport(model = transform_model,filename= filename, extent= extent)
+    model = ModelExport(model = transform_model,filename= filename, extension= extension)
     model.export()
 
 
-def import_model(filename= None):
-    imported_model = ModelImport('DBSCAN.yuksel')
+def import_model(filename):
+    imported_model = ModelImport(filename)
     imported_model.import_()
     model = imported_model.model
     return model

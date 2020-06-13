@@ -7,10 +7,12 @@ from PyQt5.QtGui import (
     QColor, QPalette, QFont
 )
 import sys
-from util import export_model, import_model, generate_blobs_data, generate_cyclic_data, generate_friedman_data
+from util import generate_blobs_data, generate_cyclic_data, generate_friedman_data, import_model
 from plot import ModelPlot, easy_plot_data
-from dbscan import DBSCAN
+# from dbscan import DBSCAN
+from algorithm_dialogs import DbscanDialog
 
+from export_dialog import ExportDialog
 
 
 class Window(QWidget):
@@ -94,6 +96,9 @@ class Window(QWidget):
 
         # Export trained model.
         expHBox = QHBoxLayout()
+        importButton = QPushButton("Dosyadan modeli oku")
+        importButton.clicked.connect(self._import_model_button)
+        expHBox.addWidget(importButton)
         expHBox.addStretch()
         exportButton = QPushButton("Modeli dışa aktar")
         exportButton.clicked.connect(self._export_model_button)
@@ -145,9 +150,12 @@ class Window(QWidget):
         
         # Check error conditions 
         # IF no data exists and some kind of things like that
-
-        self.model = DBSCAN()
-        self.model.fit(self.data)
+        
+        dialog = DbscanDialog(self.data)
+        if dialog.exec_():
+            self.model = dialog.model
+        
+        if not self.model: return None
         for key, value in self.model.info.items():
             self.statisticsList.addItem(key+": "+str(value))
 
@@ -155,10 +163,29 @@ class Window(QWidget):
 
 
     def _export_model_button(self):
+
+        # Check if no model exists.
         
-        
-        # export_model(self.model)
-        pass
+        dialog = ExportDialog(self.model)
+        dialog.exec_()
+
+    def _import_model_button(self):
+
+        dialog = QFileDialog()
+        # dialog.setFileMode("Text (*.txt)")
+        # dialog.setFilter("Text (*.txt)")
+        dialog.setNameFilter("Model dosyası (*.yuksel *.bayram)")
+
+        if dialog.exec_():
+            filename = dialog.selectedFiles()
+            # İmport model from file
+            self.model = import_model(filename[0])
+            # Edit last algorithm text
+            self.lastAlgorithmLabel.setText(filename[0])
+
+            # Write model info to listView
+            for key, value in self.model.info.items():
+                self.statisticsList.addItem(key+": "+str(value))
 
     def _chooseFile(self):
         dialog = QFileDialog()

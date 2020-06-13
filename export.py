@@ -4,7 +4,7 @@ import dbscan
 
 class ModelExport(object):
 
-    def __init__(self, model = None, filename = None, extent = 1):
+    def __init__(self, model = None, filename = None, extension = 1):
         self.model = model
         self.model_name = type(model).__name__
         
@@ -12,14 +12,14 @@ class ModelExport(object):
             'DBSCAN': self._dbscan,
         }
 
-        self.extent = {
+        self.extension = {
             1:'.yuksel',
             2:'.bayram'
         }
 
         if not filename:
-            self.filename = self.model_name + self.extent[extent]
-        else: self.filename = filename + self.extent[extent]
+            self.filename = self.model_name + self.extension[extension]
+        else: self.filename = str(filename) + self.extension[extension]
 
     def export(self):
         self.models[self.model_name]()
@@ -46,9 +46,9 @@ class ModelImport(object):
     def __init__(self, filename):
         fs = filename.split('.')
         self.filename = filename
-        self.extent = fs[-1]
+        self.extension = fs[-1]
 
-        if self.extent!='yuksel' and self.extent!='bayram':
+        if self.extension!='yuksel' and self.extension!='bayram':
             raise Exception()
 
         self.models = {
